@@ -1,9 +1,12 @@
 package com.test.effectivejava.homeworks.fileStreams;
 
 import lombok.*;
+import org.apache.commons.io.FileUtils;
 
-import java.math.BigDecimal;
-import java.net.URI;
+import java.io.File;
+import java.nio.file.Path;
+
+import static com.test.effectivejava.homeworks.fileStreams.Reader.getExtensionByApacheCommonLib;
 
 @Builder
 @Getter
@@ -14,13 +17,24 @@ public class FileAttributes {
     private String nameOfFile;
     private long sizeOfFile;
 
-
-    public static void main(String[] args) {
-
-        //FileAttributes fa = new FileAttributesBuilder().nameOfFile("1").sizeOfFile(BigDecimal.valueOf(1.0)).build();
-
-
+    static FileAttributes constructFile(String nameOfFile, long sizeOfFile){
+        return new FileAttributes(nameOfFile,sizeOfFile);
     }
 
+    static long getSizeOfFileFromInstance(Path path) {
+        long l = FileUtils.sizeOf(new File(path.toUri()));
 
+        return l;
+    }
+
+    static FileAttributes getFileAttributes(Path path){
+        return FileAttributes.builder()
+                .nameOfFile(path.toFile().getName())
+                .sizeOfFile(getSizeOfFileFromInstance(path))
+                .build();
+    }
+
+//    static boolean isValidPath(String suffix, Path path){
+//        getExtensionByApacheCommonLib(path.toString()).equals(suffix);
+//    }
 }

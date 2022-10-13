@@ -12,7 +12,9 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+//import static com.test.effectivejava.homeworks.fileStreams.FileAttributes.isValidPath;
 
 @Builder
 @Getter
@@ -28,27 +30,17 @@ public class Reader {
 
 
     static List<FileAttributes> getAllFilesAsFileAttributesList(Path dirPath, String suffix) throws IOException {
-        return Files.walk(dirPath)
+        try (Stream<Path> pathStream = Files.walk(dirPath)){
+        return pathStream
                 .filter(path -> getExtensionByApacheCommonLib(path.toString()).equals(suffix))
-                .map(path -> {
-                            try {
-                                return FileAttributes
-                                        .builder()
-                                        // There must be more optimal solution, I just can´t find it!
-                                        .nameOfFile(path.toFile().getName())
-                                        .sizeOfFile(Files.size(path))
-                                        .build();
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                )
-                .collect(Collectors.toList());
+                .map(FileAttributes::getFileAttributes)
+                .toList();
+        }
     }
 
     static List<String> getNamesOfFiles(List<FileAttributes> fileList){
         return fileList.stream()
-                .map(f -> f.getNameOfFile())
+                .map(FileAttributes::getNameOfFile)
                 .toList();
     }
 
@@ -99,7 +91,7 @@ public class Reader {
 
         printAllInfo(testFA);
 
-        Paths
+
 
     }
 }
