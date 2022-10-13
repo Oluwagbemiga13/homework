@@ -2,39 +2,49 @@ package com.test.effectivejava.homeworks.fileStreams;
 
 import lombok.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.nio.file.Path;
-
-import static com.test.effectivejava.homeworks.fileStreams.Reader.getExtensionByApacheCommonLib;
 
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
+
 public class FileAttributes {
 
     private String nameOfFile;
     private long sizeOfFile;
 
-    static FileAttributes constructFile(String nameOfFile, long sizeOfFile){
-        return new FileAttributes(nameOfFile,sizeOfFile);
+    @Override
+    public String toString(){
+        return this.getNameOfFile() + " " + this.getSizeOfFile() + " bytes";
     }
 
-    static long getSizeOfFileFromInstance(Path path) {
-        long l = FileUtils.sizeOf(new File(path.toUri()));
-
-        return l;
+    /**
+     * Used for Lombok builder in Stream
+     * @param path to file
+     * @return size of file
+     */
+    static long getSizeOfFile(Path path) {
+         return  FileUtils.sizeOf(new File(path.toUri()));
     }
 
-    static FileAttributes getFileAttributes(Path path){
+    /**
+     *
+     * @param path to file
+     * @return Instance of FileAttributes.
+     */
+    static FileAttributes constructFileAttributes(Path path){
         return FileAttributes.builder()
                 .nameOfFile(path.toFile().getName())
-                .sizeOfFile(getSizeOfFileFromInstance(path))
+                .sizeOfFile(getSizeOfFile(path))
                 .build();
     }
 
-//    static boolean isValidPath(String suffix, Path path){
-//        getExtensionByApacheCommonLib(path.toString()).equals(suffix);
-//    }
+    public static String getExtension(String filename) {
+        return FilenameUtils.getExtension(filename);
+    }
+
 }
