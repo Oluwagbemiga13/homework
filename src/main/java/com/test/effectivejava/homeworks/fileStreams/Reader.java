@@ -114,7 +114,7 @@ public class Reader {
             System.out.println("\nSmallest: " + getSmallestSize(fileList).get());
             System.out.println("Biggest: " + getBiggestSize(fileList).get()) ;
 
-            System.out.println("\nSize of all files: " + getSizeOfAllFiles(fileList));
+            System.out.println("\nSize of all files: " + getSizeOfAllFiles(fileList ) + " bytes");
             }
         else {
             System.out.println("There are no files!");
