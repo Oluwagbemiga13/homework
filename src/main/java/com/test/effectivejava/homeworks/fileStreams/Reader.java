@@ -1,7 +1,9 @@
 package com.test.effectivejava.homeworks.fileStreams;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,9 +13,23 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.test.effectivejava.homeworks.fileStreams.FileAttributes.getExtension;
 
+/**
+ * Class containing static methods for extracting FileAttributes from files.
+ */
 public class Reader {
+
+    /**
+     * Method returning instance of FileAttribute from Path
+     * @param path to file
+     * @return Instance of FileAttributes.
+     */
+    static FileAttributes constructFileAttributes(Path path){
+        return FileAttributes.builder()
+                .nameOfFile(path.toFile().getName())
+                .sizeOfFile(getSizeOfFile(path))
+                .build();
+    }
 
     /**
      * Method for extracting instances of FileAttributes as List. Goes through whole directory.
@@ -26,7 +42,7 @@ public class Reader {
         try (Stream<Path> pathStream = Files.walk(dirPath)){
         return pathStream
                 .filter(path -> getExtension(path.toString()).equals(extention))
-                .map(FileAttributes::constructFileAttributes)
+                .map(Reader::constructFileAttributes)
                 .toList();
         }
     }
@@ -44,28 +60,52 @@ public class Reader {
                 .toList();
     }
 
+    /**
+     * Method for extracting names of FileAttributes from List
+     * @param fileList - List of FileAttributes
+     * @return List of names
+     */
     static List<String> getNamesOfFiles(List<FileAttributes> fileList){
         return fileList.stream()
                 .map(FileAttributes::toString)
                 .toList();
     }
 
+    /**
+     * Method for finding the smallest sized FileAttribute from List
+     * @param fileList - List of FileAttributes
+     * @return the smallest sized FileAttribute
+     */
     static Optional<FileAttributes> getSmallestSize (List <FileAttributes> fileList) {
         return fileList.stream()
                 .min(Comparator.comparing(FileAttributes::getSizeOfFile));
     }
 
+    /**
+     * Method for finding the biggest sized FileAttribute from List
+     * @param fileList - List of FileAttributes
+     * @return the biggest sized FileAttribute
+     */
     static Optional<FileAttributes> getBiggestSize (List <FileAttributes> fileList) {
         return fileList.stream()
                 .max(Comparator.comparing(FileAttributes::getSizeOfFile));
     }
 
+    /**
+     * Method for determining size of all FileAttributes in List
+     * @param fileList - List of FileAttributes
+     * @return size of all FileAttributes
+     */
     static long getSizeOfAllFiles (List <FileAttributes> fileList){
         return fileList.stream()
                 .mapToLong(FileAttributes::getSizeOfFile)
                 .sum();
     }
-    
+
+    /**
+     * Method for printing info about FileAttributes
+     * @param fileList - List of FileAttributes
+     */
     static void printAllInfo(List <FileAttributes> fileList) {
 
         if(!fileList.isEmpty()) {
@@ -82,17 +122,23 @@ public class Reader {
         }
     }
 
-
-
-    public static void main(String[] args) throws IOException {
-
-        Path dirPath = Paths.get(".");
-
-        List <FileAttributes> testFA = getAllFilesAsFileAttributesList(dirPath, "java");
-
-        testFA = sortBySize(testFA);
-
-        printAllInfo(testFA);
-        
+    /**
+     * Method for getting size of file form Path
+     * Used for Lombok builder in Stream
+     * @param path to file
+     * @return size of file
+     */
+    static long getSizeOfFile(Path path) {
+        return  FileUtils.sizeOf(new File(path.toUri()));
     }
+
+    /**
+     * Method for getting extention of file
+     * @param filename - name of file
+     * @return extension without "."
+     */
+    public static String getExtension(String filename) {
+        return FilenameUtils.getExtension(filename);
+    }
+
 }

@@ -22,29 +22,4 @@ public class FileAttributes {
         return this.getNameOfFile() + " " + this.getSizeOfFile() + " bytes";
     }
 
-    /**
-     * Used for Lombok builder in Stream
-     * @param path to file
-     * @return size of file
-     */
-    static long getSizeOfFile(Path path) {
-         return  FileUtils.sizeOf(new File(path.toUri()));
-    }
-
-    /**
-     *
-     * @param path to file
-     * @return Instance of FileAttributes.
-     */
-    static FileAttributes constructFileAttributes(Path path){
-        return FileAttributes.builder()
-                .nameOfFile(path.toFile().getName())
-                .sizeOfFile(getSizeOfFile(path))
-                .build();
-    }
-
-    public static String getExtension(String filename) {
-        return FilenameUtils.getExtension(filename);
-    }
-
 }
